@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="348" height="136" viewbox="0 0 348 136">
+  <desc>
+    CreationDate: Thu Sep 20 00:01:23 2012
+    Creator: perl module Algorithm::Networksort version 1.20.
+  </desc>
+  <title>N = 10 Sorting Network.</title>
+  <defs>
+    <g id="inputline" style="fill:none; stroke-width:2" >
+      <desc>Input line.</desc>
+      <circle style="stroke:black" cx="18" cy="0" r="2" />
+      <line style="stroke:black" x1="18" y1="0" x2="330" y2="0" />
+      <circle style="stroke:black" cx="330" cy="0" r="2" />
+    </g>
+    <!-- Now the comparator lines, which vary in length. -->
+    <!-- Define the input line template. -->
+    <g id="inputline" style="fill:none; stroke:black; stroke-width:2" >
+       <desc>Input line.</desc>
+       <line x1="18" y1="0" x2="330" y2="0" style="marker-start: url(#inputbeginmark); marker-end: url(#inputendmark)" />
+    </g>
+    <!-- Define the comparator lines, which vary in length. -->
+    <g id="comparator1_down" style="stroke-width:2" >
+      <desc>Comparator size 1.</desc>
+      <circle style="fill:black; stroke:black" cx="0" cy="0" r="2" />
+      <line style="fill:black; stroke:black" x1="0" y1="0" x2="0" y2="14" />
+      <circle style="fill:black; stroke:black" cx="0" cy="14" r="2" />
+    </g>
+    <g id="comparator2_down" style="stroke-width:2" >
+      <desc>Comparator size 2.</desc>
+      <circle style="fill:black; stroke:black" cx="0" cy="0" r="2" />
+      <line style="fill:black; stroke:black" x1="0" y1="0" x2="0" y2="28" />
+      <circle style="fill:black; stroke:black" cx="0" cy="28" r="2" />
+    </g>
+    <g id="comparator3_down" style="stroke-width:2" >
+      <desc>Comparator size 3.</desc>
+      <circle style="fill:black; stroke:black" cx="0" cy="0" r="2" />
+      <line style="fill:black; stroke:black" x1="0" y1="0" x2="0" y2="42" />
+      <circle style="fill:black; stroke:black" cx="0" cy="42" r="2" />
+    </g>
+    <g id="comparator5_down" style="stroke-width:2" >
+      <desc>Comparator size 5.</desc>
+      <circle style="fill:black; stroke:black" cx="0" cy="0" r="2" />
+      <line style="fill:black; stroke:black" x1="0" y1="0" x2="0" y2="70" />
+      <circle style="fill:black; stroke:black" cx="0" cy="70" r="2" />
+    </g>
+    <g id="comparator4_down" style="stroke-width:2" >
+      <desc>Comparator size 4.</desc>
+      <circle style="fill:black; stroke:black" cx="0" cy="0" r="2" />
+      <line style="fill:black; stroke:black" x1="0" y1="0" x2="0" y2="56" />
+      <circle style="fill:black; stroke:black" cx="0" cy="56" r="2" />
+    </g>
+  </defs>
+
+  <!-- Draw the input lines. -->
+  <g id="inputgroup">
+    <use xlink:href="#inputline" y = "5" />
+    <use xlink:href="#inputline" y = "19" />
+    <use xlink:href="#inputline" y = "33" />
+    <use xlink:href="#inputline" y = "47" />
+    <use xlink:href="#inputline" y = "61" />
+    <use xlink:href="#inputline" y = "75" />
+    <use xlink:href="#inputline" y = "89" />
+    <use xlink:href="#inputline" y = "103" />
+    <use xlink:href="#inputline" y = "117" />
+    <use xlink:href="#inputline" y = "131" />
+  </g>
+
+  <!-- Draw the comparator lines. -->
+  <!-- [0, 1] --> <use xlink:href="#comparator1_down" x = "27" y = "5" />
+  <!-- [3, 4] --> <use xlink:href="#comparator1_down" x = "27" y = "47" />
+  <!-- [5, 6] --> <use xlink:href="#comparator1_down" x = "27" y = "75" />
+  <!-- [8, 9] --> <use xlink:href="#comparator1_down" x = "27" y = "117" />
+  <!-- [2, 4] --> <use xlink:href="#comparator2_down" x = "41" y = "33" />
+  <!-- [7, 9] --> <use xlink:href="#comparator2_down" x = "41" y = "103" />
+  <!-- [2, 3] --> <use xlink:href="#comparator1_down" x = "55" y = "33" />
+  <!-- [7, 8] --> <use xlink:href="#comparator1_down" x = "55" y = "103" />
+  <!-- [0, 3] --> <use xlink:href="#comparator3_down" x = "69" y = "5" />
+  <!-- [5, 8] --> <use xlink:href="#comparator3_down" x = "69" y = "75" />
+  <!-- [0, 2] --> <use xlink:href="#comparator2_down" x = "83" y = "5" />
+  <!-- [5, 7] --> <use xlink:href="#comparator2_down" x = "83" y = "75" />
+  <!-- [1, 4] --> <use xlink:href="#comparator3_down" x = "97" y = "19" />
+  <!-- [6, 9] --> <use xlink:href="#comparator3_down" x = "97" y = "89" />
+  <!-- [1, 3] --> <use xlink:href="#comparator2_down" x = "111" y = "19" />
+  <!-- [6, 8] --> <use xlink:href="#comparator2_down" x = "111" y = "89" />
+  <!-- [1, 2] --> <use xlink:href="#comparator1_down" x = "125" y = "19" />
+  <!-- [6, 7] --> <use xlink:href="#comparator1_down" x = "125" y = "89" />
+  <!-- [0, 5] --> <use xlink:href="#comparator5_down" x = "139" y = "5" />
+  <!-- [1, 6] --> <use xlink:href="#comparator5_down" x = "153" y = "19" />
+  <!-- [1, 5] --> <use xlink:href="#comparator4_down" x = "167" y = "19" />
+  <!-- [2, 7] --> <use xlink:href="#comparator5_down" x = "181" y = "33" />
+  <!-- [3, 8] --> <use xlink:href="#comparator5_down" x = "195" y = "47" />
+  <!-- [4, 9] --> <use xlink:href="#comparator5_down" x = "209" y = "61" />
+  <!-- [4, 8] --> <use xlink:href="#comparator4_down" x = "223" y = "61" />
+  <!-- [3, 7] --> <use xlink:href="#comparator4_down" x = "237" y = "47" />
+  <!-- [4, 7] --> <use xlink:href="#comparator3_down" x = "251" y = "61" />
+  <!-- [2, 5] --> <use xlink:href="#comparator3_down" x = "265" y = "33" />
+  <!-- [3, 6] --> <use xlink:href="#comparator3_down" x = "279" y = "47" />
+  <!-- [4, 6] --> <use xlink:href="#comparator2_down" x = "293" y = "61" />
+  <!-- [3, 5] --> <use xlink:href="#comparator2_down" x = "307" y = "47" />
+  <!-- [4, 5] --> <use xlink:href="#comparator1_down" x = "321" y = "61" />
+</svg>

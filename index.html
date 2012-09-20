@@ -1,0 +1,1205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>Introduction to Sorting Networks</title>
+<!-- metadata -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="generator" content="S5" />
+<meta name="version" content="S5 1.1" />
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<link rel="stylesheet" href="ui/default/slides.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+<!-- S5 JS -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+
+<style>
+html body h1 {
+  font-size: 50%;
+}
+</style>
+
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1>Introduction to Sorting Networks</h1>
+</div>
+
+</div>
+
+
+<div class="presentation">
+
+<div class="slide">
+  <center>
+  <h1>Introduction to Sorting Networks</h1>
+  <h2>Doug Hoyte</h2>
+  <div style="margin-top:10px"><img height=300 src="img/paeth-median9.svg"></div>
+  </center>
+</div>
+
+
+<div class="slide">
+  <h1>What are sorting networks?</h1>
+  <ul>
+    <li>Algorithms for sorting numbers (or anything else that can be ordered)</li>
+    <li>
+      Different from algorithms like quick sort
+      <ul>
+        <li>All operations are planned out in advance (aka data-independent or oblivious)</li>
+        <li>Any given sorting network only works on a fixed size input</li>
+      </ul>
+    </li>
+    <li>Not general purpose enough for most applications but sometimes they are essential</li>
+    <li>Researched for 60+ years but still many unanswered questions</li>
+  </ul>
+</div>
+
+
+<div class="slide">
+  <h1>Compare-swap operations</h1>
+
+  <h2>Consider this array:</h2>
+
+  <pre>
+    >>> array = [3,2,4]
+  </pre>
+
+  <h2>Normal way to sort it:</h2>
+  <pre>
+    >>> array.sort()
+  </pre>
+
+  <h2>With a sorting network for size 3:<h2>
+  <pre style="font-size:80%">
+>>> def compare_swap(array, a, b):
+...     if array[a] < array[b]:
+...         (array[a], array[b]) = (array[b], array[a])
+... 
+>>> compare_swap(array, 0, 1)
+>>> compare_swap(array, 0, 2)
+>>> compare_swap(array, 1, 2)
+  </pre>
+</div>
+
+
+<div class="slide">
+  <h1>knuth diagrams</h1>
+
+  <pre style="font-size:85%">
+>>> def compare_swap(array, a, b):
+...     if array[a] > array[b]:
+...         (array[a], array[b]) = (array[b], array[a])
+...
+>>> compare_swap(array, 0, 1)
+>>> compare_swap(array, 0, 2)
+>>> compare_swap(array, 1, 2)
+  </pre>
+
+  This is the corresponding sorting network notation (aka <i>knuth diagram</i>):
+
+  <center><img height=225 src="img/notation.svg"></center>
+</div>
+
+
+
+<div class="slide">
+  <h1>x86 asm compiled with CMU lisp</h1>
+
+  <center><img height=175 src="img/good-size3.svg"></center>
+
+<pre style="margin-top: 15px; font-size: 55%">
+      2E:       MOV     EAX, [EDX+1] ;;; (LET ((A (AREF ARR 0)) (B (AREF ARR 2))) ...)
+      31:       MOV     ECX, [EDX+9]
+      34:       CMP     EAX, ECX
+      36:       JLE     L0
+      38:       MOV     [EDX+1], ECX ;;; (SETF (AREF ARR 0) B (AREF ARR 2) A)
+      3B:       MOV     [EDX+9], EAX
+      3E: L0:   MOV     EAX, [EDX+1] ;;; (LET ((A (AREF ARR 0)) (B (AREF ARR 1))) ...)
+      41:       MOV     ECX, [EDX+5]
+      44:       CMP     EAX, ECX
+      46:       JLE     L1
+      48:       MOV     [EDX+1], ECX ;;; (SETF (AREF ARR 0) B (AREF ARR 1) A)
+      4B:       MOV     [EDX+5], EAX
+      4E: L1:   MOV     EAX, [EDX+5] ;;; (LET ((A (AREF ARR 1)) (B (AREF ARR 2))) ...)
+      51:       MOV     ECX, [EDX+9]
+      54:       CMP     EAX, ECX
+      56:       JLE     L2
+      58:       MOV     [EDX+5], ECX ;;; (SETF (AREF ARR 1) B (AREF ARR 2) A)
+      5B:       MOV     [EDX+9], EAX
+      5E: L2:   ...
+</pre>
+
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Net Construction: Base case</h1>
+
+  <ul>
+    <li>Arrays of 0 and 1 elements are already sorted</li>
+    <li>If an array of 2 elements is out of order, just put them in order. The smallest value goes to the bottom:</li> 
+  </ul>
+
+  <img style="margin-top: 25px" height=200 src="img/basecase.svg">
+
+  <ul>
+    <li>The green dots indicate that these output wires now contain elements in the correct positions</li>
+  </ul>
+</div>
+
+
+
+<div class="slide">
+  <h1>Adding another element</h1>
+
+  <h2>Sink the smallest element to the bottom:</h2>
+  <img height=150 src="img/construction-step1.svg">
+
+  <h2>Next treat the top two elements as an independent network and apply the two-element base case:</h2>
+  <img height=150 src="img/construction-step2.svg">
+
+  <h2>The second largest element is now in the middle and the largest on top.</h2>
+</div>
+
+
+
+<div class="slide">
+  <h1>Example: size 5, step 1</h1>
+  <center><img height=250 src="img/bubble-sort.svg">
+  <h2>Move the smallest element to the bottom</h2>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Example: size 5, step 2</h1>
+  <center><img height=250 src="img/bubble-sort2.svg">
+  <h2>Then the next smallest to the second from the bottom</h2>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Example: size 5, step 3</h1>
+  <center><img height=250 src="img/bubble-sort3.svg">
+  <h2>And the next</h2>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Example: size 5, step 4</h1>
+  <center>
+  <img height=250 src="img/bubble-sort4.svg">
+  <h2>And finally the base case.</h2>
+  <br>
+  <h2>This is bubble sort except that the normal bubble sort returns as soon as it detects the array is sorted. Because this sorting network doesn't, it's a <i>non-natural</i> bubble sort:</h2>
+  </center>
+</div>
+
+
+
+
+
+<div class="slide">
+  <h1>Various network algorithms</h1>
+  <center style="margin-top:10px">
+
+  <table style="text-size: 80%">
+
+    <tr>
+    <td align=center>
+      <center>Bubble</center>
+      <img height=160 src="img/bubble-size8.svg">
+    </td>
+    <td align=center>
+      <center>Bose-Nelson</center>
+      <img height=160 src="img/bosenelson-size8.svg">
+    </td>
+
+    </tr><tr>
+
+    <td align=center>
+      <center>Bitonic</center>
+      <img height=160 src="img/bitonic-size8.svg">
+    </td>
+    <td align=center>
+      <center>Merge-Exchange</center>
+      <img height=160 src="img/batcher-size8.svg">
+    </td>
+    </tr>
+
+  </table>
+
+  </center>
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Micro-scale growth of algorithms</h1>
+  <center>
+    <img src="img/algo-comparison2.png">
+  </center>
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Macro-scale growth of algorithms</h1>
+  <center>
+    <img src="img/algo-comparison.png">
+  </center>
+</div>
+
+
+
+
+
+
+
+
+<div class="slide">
+  <h1>Big-<span style="font: sans-serif !important">&#x1D4DE;</span> Complexity</h1>
+
+  <ul style="font-size:95%">
+    <li>Bubble sorting networks require &#x1D4DE;(n<sup>2</sup>) comparison-swap operations where n is the length of the array to be sorted</li>
+    <li>Best general-purpose sorting network algorithms entail &#x1D4DE;(n&sdot;log<sup>2</sup>(n)) operations</li>
+    <li>Because sorting networks implement comparison sorts, the complexity lower bound is &#x1D4DE;(n&sdot;log(n))</li>
+    <li>There is an &#x1D4DE;(n&sdot;log(n)) algorithm but it has an extremely high constant factor (so high that it isn't useful for arrays < than 2<sup>6100</sup>)</li>
+    <li>There is another algorithm with &#x1D4DE;(n&sdot;log(n)) and reasonable constant factors but it is incorrect for a small fraction of inputs</li>
+    <li>An &#x1D4DE;(n&sdot;log(n)) algorithm that has reasonably small constant factors and is correct has not yet been discovered</li>
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+<div class="slide">
+  <h1>Parallelism</h1>
+  <ul>
+    <li>In standard sorting network notation, operations that don't overlap are shown in parallel</li>
+    <li>Parallel operations can be done in any order or even at the same time</li>
+    <li>Parallelism is most useful in special purpose circuit designs. However, being aware that certain comparisons can be re-ordered can also improve pipeline performance in software</li>
+  </ul>
+    <center style="margin-top:10px">
+      <img height=200 src="img/batcher-size8.svg">
+    </center>
+</div>
+
+
+
+<div class="slide">
+  <h1>Parallelism, 2</h1>
+  <ul>
+    <li>There is actually even more parallelism possible in the networks than can be seen in the diagrams &mdash; we are limited by notation because we don't want the network lines to overlap</li>
+    <li>For instance in the following network, operations 0 and 1 can be done in parallel, as can 2, 3, and 4:
+  </ul>
+    <center style="margin-top:10px">
+      <img height=240 src="img/batcher-size10.svg">
+    </center>
+</div>
+
+
+
+<div class="slide">
+  <h1>Min/Max selection networks</h1>
+
+  <ul>
+    <li>Sometimes we don't need to waste time sorting the whole array</li>
+    <li>For example, if we only need to find the smallest element, the first step in our bubble sort construction would work</li>
+  </ul>
+  <center><img height=250 src="img/bubble-sort.svg">
+  </center>
+</div>
+
+
+
+<div class="slide">
+  <h1>Median selection networks</h1>
+
+  <center>
+
+  <table>
+  <tr>
+    <th>3x3 image kernel</th>
+    <th>Paeth's 9-element median filter</th>
+  </tr>
+
+  <tr><td align=center valign=top>
+
+<table border=1 cellspacing=0 cellpadding=20>
+<tr><td>0</td><td>1</td><td>2</td></tr>
+<tr><td>3</td><td>4</td><td>5</td></tr>
+<tr><td>6</td><td>7</td><td>8</td></tr>
+</table>
+
+  </td><td valign=top align=right>
+
+<img height=275 src="img/paeth-median9.svg">
+
+  </td></tr>
+  </table>
+
+  </center>
+
+</div>
+
+
+
+
+
+<div class="slide">
+  <h1>Bi-directional networks</h1>
+  <center style="margin-top:10px">
+
+  <table cellpadding=0 cellspacing=0><tr>
+
+    <td> <img height=130 src="img/bitonic-bi-size4.svg"> </td>
+    <td align=center> <img height=130 src="img-manual/rewire4.svg"> </td>
+    <td> <img height=130 src="img/bitonic-uni-size4.svg"> </td>
+
+  </tr><tr style="font-size: 90%">
+
+    <td valign=top>
+      <ul>
+        <li>Down arrows are normal comparators that move the smallest to the bottom wire</li>
+        <li>Up-arrows are the opposite: they move the smallest upwards</li>
+      </ul>
+    </td>
+
+    <td valign=top>
+      <ul>
+        <li>Bi-directional networks can be converted into normal networks by twisting all up comparators into down comparators</li>
+      </ul>
+    </td>
+
+    <td valign=top>
+      <ul>
+        <li>In order to prevent ugly wire crossings, untwist the wires all the way to the outputs</li>
+      </ul>
+    </td>
+
+  </tr></table>
+
+  </center>
+</div>
+
+
+
+
+
+<div class="slide">
+  <h1>0-1 Principle</h1>
+
+  <ul>
+    <li>
+      Given n distinct elements, there are <b>n!</b> possible orderings
+      <ul class="because"><li>Pick the largest element. You have n different choices of the location to put it. Then pick the next largest element. Because the largest is occupying a spot, you now have only n-1 places to put it. Repeat. So the total number of possibilities are n&sdot;(n-1)&sdot;...&sdot;3&sdot;2&sdot;1 = n!</li></ul>
+    </li>
+    <li>The 0-1 principle states that any sorting network that is capable of sorting an array containing only the elements 0 and 1 (a bitstring) will also sort arrays of arbitrary elements</li>
+    <li>There are "only" <b>2<sup>n</sup></b> bitstrings for a given n</li>
+    <li>There are only <b>n+1</b> sorted bitstrings for a given n</li>
+    <li>The principle is important for many network designs (ie see <i>bitonic sort</i>)</li>
+  </ul>
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Sort stability</h1>
+
+  <ul>
+    <li><i>Transposition networks</i> like bubble sort are stable (assuming compare-swap is &lt; and not &lt;=)</li>
+    <li>Example: If green and blue inputs are equal their order will be preserved:</li>
+  </ul>
+
+  <center>
+  <div>
+    <img height=130 src="img/stable1.svg">
+    <img height=130 src="img/stable2.svg">
+    <img height=130 src="img/stable3.svg">
+  </div>
+
+  <div>
+    <img height=130 src="img/stable4.svg">
+    <img height=130 src="img/stable5.svg">
+    <img height=130 src="img/stable6.svg">
+  </div>
+  </center>
+</div>
+
+
+
+<div class="slide">
+  <h1>Sort stability, 2</h1>
+
+  <ul>
+    <li>However, most useful networks are not stable</li>
+    <li>Example: Assume green and blue are the smallest elements and they are equal. With a merge-exchange network their order is not preserved:</li>
+  </ul>
+
+  <center style="margin-top:30px">
+  <div>
+    <img height=140 src="img/unstable1.svg">
+    <img height=140 src="img/unstable2.svg">
+    <img height=140 src="img/unstable3.svg">
+  </div>
+  </center>
+
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Hasse diagrams</h1>
+  <center>
+
+  <div style="text-align:left">
+    <ul>
+      <li><i>Order theory</i> is concerned with binary relations between items in a set</li>
+      <li>Useful for analyzing sorting networks</li>
+      <li>A sorting network's job is to turn a partially ordered set (aka <i>poset</i>) into a totally ordered set</li>
+      <li>Here is a <i>hasse diagram</i> depicting an unsorted array (numbers are wire indices):</li>
+    </ul>
+  </div>
+
+  <img style="margin-top:30px" src="img-manual/hasse1.png">
+
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 2</h1>
+  <center>
+  <img src="img-manual/hasse2.png">
+  <img height=200 src="img/hasse2.svg">
+
+  <div style="text-align:left">
+    <ul>
+      <li>If we do a compare-swap on wires 0 and 2, we end up with a 3-segment poset</li>
+      <li>The hasse diagram indicates we now know the relative order between the elements on wires 0 and 2, but no other orders</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 3</h1>
+  <center>
+  <img src="img-manual/hasse3.png">
+  <img height=200 src="img/hasse3.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>Comparing wires 1 and 3 gives a 2-segment poset</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 4</h1>
+  <center>
+  <img src="img-manual/hasse4.png">
+  <img height=200 src="img/hasse4.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>Now we have a single poset to work with</li>
+      <li>This diagram shows that element 0 now contains the largest value</li>
+      <li>The smallest value isn't yet known: it could be in 2 or 3</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 5</h1>
+  <center>
+  <img src="img-manual/hasse5.png">
+  <img height=200 src="img/hasse5.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>After sorting 2 and 3, the smallest value is now in 3</li>
+      <li>The only thing remaining is to figure out which of the elements in 1 or 2 are larger</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 6</h1>
+  <center>
+
+  <table><tr><td>
+  <img src="img-manual/hasse6.png">
+  </td><td>
+  <img height=200 src="img/hasse6.svg">
+  </td></tr></table>
+  <div style="text-align:left">
+    <ul>
+      <li>We now have a totally ordered set</li>
+      <li>Using hasse diagrams we have shown that this is a valid sorting network</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+
+
+
+<div class="slide">
+  <h1>Swaps with 2<sup>n</sup> input combinations</h1>
+  <center>
+
+  <table cellspacing=0 cellpadding=0><tr><td>
+
+  <div style="font-size: 60%">
+
+  <table cellspacing=0 cellpadding=0><tr><td valign=top align=center>
+
+    <img height=120 src="img/bad-size3.svg">
+
+    <table border=1 cellspacing=0 cellpadding=2 style="text-align:center"><tr><th>Input Array</th><th>Swaps Required</th></tr>
+
+<tr><td>000</td><td>0</tr>
+<tr><td>001</td><td>2</tr>
+<tr><td>010</td><td>1</tr>
+<tr><td>011</td><td>2</tr>
+<tr><td>100</td><td>0</tr>
+<tr><td>101</td><td>1</tr>
+<tr><td>110</td><td>0</tr>
+<tr><td>111</td><td>0</tr>
+<tr><th>Avg</th><td style='font-size:120%; font-weight:bold'>0.75</td></tr>
+
+    </table>
+
+  </td><td align=center>
+
+    <img height=120 src="img/good-size3.svg">
+    <table border=1 cellspacing=0 cellpadding=2 style="text-align:center"><tr><th>Input Array</th><th>Swaps Required</th></tr>
+
+<tr><td>000</td><td>0</tr>
+<tr><td>001</td><td>1</tr>
+<tr><td>010</td><td>1</tr>
+<tr><td>011</td><td>1</tr>
+<tr><td>100</td><td>0</tr>
+<tr><td>101</td><td>1</tr>
+<tr><td>110</td><td>0</tr>
+<tr><td>111</td><td>0</tr>
+<tr><th>Avg</th><td style='font-size:120%; font-weight:bold'>0.5</td></tr>
+
+    </table>
+
+  </td></tr></table>
+  </div>
+
+
+  </td><td valign=top style="font-size: 80%">
+
+    <ul>
+      <li>Even networks that have the same number of comparators and stages can perform differently depending on input</li>
+      <li>In order to sort the array, the first network performs more swaps for some inputs</li>
+      <li>Whether the first network is slower because of this depends on your architecture and compiler
+    <ul>
+
+  </td></tr></table>
+
+
+  </center>
+</div>
+
+
+
+
+
+
+<div class="slide">
+  <h1>Swaps with <span style="text-transform: none">n</span>! input combinations</h1>
+  <center>
+
+  <table><tr><td>
+
+  <div style="font-size: 60%">
+
+  <table><tr><td align=center>
+
+    <img height=110 src="img/bad-size3.svg">
+
+    <table border=1 cellspacing=0 cellpadding=2 style="text-align:center"><tr><th>Input Array</th><th>Swaps Required</th></tr>
+
+<tr><td>210</td><td>0</tr>
+<tr><td>120</td><td>1</tr>
+<tr><td>102</td><td>2</tr>
+<tr><td>201</td><td>1</tr>
+<tr><td>021</td><td>2</tr>
+<tr><td>012</td><td>3</tr>
+<tr><th>Avg</th><td style='font-size:120%; font-weight:bold'>1.5</td></tr>
+
+    </table>
+
+  </td><td valign=top align=center>
+
+    <img height=110 src="img/good-size3.svg">
+    <table border=1 cellspacing=0 cellpadding=2 style="text-align:center"><tr><th>Input Array</th><th>Swaps Required</th></tr>
+
+<tr><td>210</td><td>0</tr>
+<tr><td>120</td><td>1</tr>
+<tr><td>102</td><td>2</tr>
+<tr><td>201</td><td>1</tr>
+<tr><td>021</td><td>2</tr>
+<tr><td>012</td><td>1</tr>
+<tr><th>Avg</th><td style='font-size:120%; font-weight:bold'>1.17</td></tr>
+
+
+    </table>
+
+  </td></tr></table>
+  </div>
+
+
+  </td><td valign=top style="font-size: 80%">
+
+    <ul>
+      <li>A slightly more intuitive way to look at the same thing is to consider <b>n!</b> array permutations instead of a bitstring
+      <li>Here we see that the first network has a pathologically bad case where all swaps are executed
+      <li>In the second network, the first operation is guaranteed to have put either the largest or smallest element into its final position</li>
+    <ul>
+
+  </td></tr></table>
+
+
+  </center>
+</div>
+
+
+
+
+
+
+<div class="slide">
+  <h1>Closing a timing side-channel</h1>
+
+  <ul>
+    <li>Many sorting algorithms take different amounts of time to complete depending on how sorted the array is already</li>
+    <li>Adversaries can monitor side-channels like timing, power usage, and RF radiation to learn secret information. This is especially true for "tamper-proof" hardware like smart cards but is an issue for general-purpose systems as well</li>
+    <li>Sorting networks plus a constant-time compare-swap are sort routines that don't leak information about the data being sorted</li>
+  </ul>
+
+<center>
+  <table cellpadding=0 cellspacing=0 style="margin-top:35px; font-size: 85%">
+
+  <tr>
+    <th>Possibly leaky</th>
+    <th>Constant-time (simple)</th>
+    <th>Constant-time (best)</th>
+  </tr>
+
+  <tr><td>
+
+  <pre style="font-size:55%">
+    int temp;
+    if (a[i] < a[j]) {
+      temp = a[i];
+      a[i] = a[j];
+      a[j] = temp;
+    }
+  </pre>
+
+  </td><td>
+
+  <pre style="font-size:55%">
+    int temp[2];
+    int noswap = !(a[i] < a[j]);
+    temp[0] = a[i];
+    temp[1] = a[j];
+    a[i] = temp[!noswap];
+    a[j] = temp[noswap];
+  </pre>
+
+  </td><td>
+
+  <pre style="font-size:55%">
+    #define max(x, y) (x ^ ((x ^ y) & -(x < y)))
+    #define min(x, y) (y ^ ((x ^ y) & -(x < y)))
+    int temp;
+    temp = max(a[i], a[j]);
+    a[j] = min(a[i], a[j]);
+    a[i] = temp;
+  </pre>
+
+  </td></tr></table>
+</center>
+</div>
+
+
+
+
+
+
+
+
+<div class="slide">
+  <h1>x86-64 Asm, gcc 4.5.2 -O3</h1>
+
+  <table cellspacing=0 cellpadding=0 style="margin-top:15px">
+    <tr>
+      <th>Possibly Leaky</th>
+      <td></td>
+    </tr>
+    <tr>
+      <td>
+  <pre style="margin-top: 0px; font-size: 55%">
+39: mov  0x4(%rdi),%edx   ;
+42: mov  0x44(%rdi),%r13d ;
+46: cmp  %r13d,%edx       ; a[0] < a[16]
+49: mov  %edx,-0x4(%rsp)  ; temp = a[0]
+53: jge  0x400746 <+70>   ; maybe goto 70
+55: mov  %r13d,0x4(%rdi)  ; a[0] = a[16]
+59: mov  %r13d,-0x4(%rsp) ;
+64: mov  %edx,%r13d       ;
+67: mov  %edx,0x44(%rdi)  ; a[16] = temp
+70: ...
+  </pre>
+      </td>
+      <td>
+        <ul>
+          <li>The jge conditional jump at address 53 causes a timing leak on some systems</li>
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Constant-time (simple)</th>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>
+  <pre style="margin-top: 0px; padding-left: 0px; font-size: 55%">
+16: mov    0x40(%rdi),%edx
+19: mov    (%rdi),%ecx
+21: cmp    %edx,%ecx        ; diff = !(a[0] < a[16])
+31: setge  %al
+27: mov    %ecx,-0x8(%rsp)  ; temp[0] = a[0]
+23: mov    %edx,-0x4(%rsp)  ; temp[1] = a[16]
+37: mov    %eax,%edx
+41: xor    $0x1,%edx
+48: movslq %edx,%rdx
+51: mov    -0x8(%rsp,%rdx,4),%edx
+68: mov    %edx,-0x30(%rsp) ; a[0] = temp[!diff]
+39: cltq
+44: mov    -0x8(%rsp,%rax,4),%eax
+59: mov    %eax,-0x40(%rsp) ; a[16] = temp[diff]
+63: mov    %eax,0x40(%rdi)
+  </pre>
+      </td>
+
+      <td>
+        <ul>
+          <li>No jumps</li>
+          <li>Edited/re-ordered for clarity</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+</div>
+
+
+
+
+
+
+
+<div class="slide">
+  <h1>Timing results: Sorting 32 ints</h1>
+
+  <center>
+  <table style="font-size: 65%">
+
+  <tr><td align=center>
+  Intel Atom N550 (gcc 4.5.2)
+
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>6.828 &mu;s</td>
+      <td>6.025 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>1.841 &mu;s</td>
+      <td>1.924 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>3.057 &mu;s</td>
+      <td>3.057 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>1.900 &mu;s</td>
+      <td>1.901 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+
+
+
+  </td><td align=center>
+
+  AMD Athlon II X2 215 (gcc 4.4.3)
+
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>1.102 &mu;s</td>
+      <td>0.955 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>0.412 &mu;s</td>
+      <td>0.398 &mu;s</td>
+        <td align=center>?</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>0.749 &mu;s</td>
+      <td>0.748 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>0.458 &mu;s</td>
+      <td>0.457 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+
+
+  </td></tr><tr><td align=center>
+
+  SPARC sun4v (gcc 4.4.3)
+
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>5.900 &mu;s</td>
+      <td>20.112 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>5.696 &mu;s</td>
+      <td>4.240 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>16.512 &mu;s</td>
+      <td>16.452 &mu;s</td>
+        <td align=center>?</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>8.048 &mu;s</td>
+      <td>8.048 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+
+  </td><td align=center>
+
+  ARM v7 rev 2 (gcc 4.4.5)
+
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>10.041 &mu;s</td>
+      <td>8.166 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>2.333 &mu;s</td>
+      <td>2.333 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>4.000 &mu;s</td>
+      <td>4.000 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>2.833 &mu;s</td>
+      <td>2.833 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+  </td></tr>
+
+  </table>
+  </center>
+
+
+  <ul style="font-size: 80%">
+    <li>qsort(3) on SPARC is solaris implementation not glibc</li>
+    <li>Results marked with ? have timing differences but I haven't looked into why</li>
+  </ul>
+
+</div>
+
+
+<!--
+SunOS 5.10 Generic_144488-06 sun4v sparc SUNW,Sun-Blade-T6300 Solaris
+
+
+
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>5.904 &mu;s</td>
+      <td>20.112 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>5.692 &mu;s</td>
+      <td>4.236 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>16.512 &mu;s</td>
+      <td>16.448 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>8.048 &mu;s</td>
+      <td>8.048 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+
+
+
+  Intel Core i7 (gcc 4.4.3)
+  <table border=1 cellspacing=0 cellpadding=5>
+    <tr>
+      <th>Algo</th>
+      <th>Asc</th>
+      <th>Desc</th>
+      <th>Const</th>
+    </tr>    <tr>
+      <th>qsort(3)</th>
+      <td>0.710 &mu;s</td>
+      <td>0.604 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Leaky</th>
+      <td>0.250 &mu;s</td>
+      <td>0.238 &mu;s</td>
+        <td align=center style="color:red">&#x2717;</td>    </tr>    <tr>
+      <th>Const-simple</th>
+      <td>0.395 &mu;s</td>
+      <td>0.393 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>    <tr>
+      <th>Const-best</th>
+      <td>0.304 &mu;s</td>
+      <td>0.303 &mu;s</td>
+        <td align=center style="color:green">&#x2713;</td>    </tr>  </table>
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="slide">
+  <h1>Misc Applications</h1>
+
+  <ul>
+    <li>
+      Embedded devices
+      <ul>
+        <li>Because running and sometimes generating sorting networks uses no stack space, sorting networks are useful on RAM-constrainted machines</li>
+        <li>uClibc's qsort(3) uses a shell sort for this reason</li>
+      </ul>
+    </li>
+    <li>
+      Secure Multi-Party Communications
+      <ul>
+        <li>Sorting networks are building blocks for cryptographic protocols that share aggregations of data between parties without revealing that data</li>
+        <li>Financial data aggregates computed by companies without any company giving up specific details</li>
+        <li>Comparing Intrustion Detection System (IDS) data between hosting providers without violating any customers' privacy</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+
+
+<div class="slide">
+  <h1>Research directions</h1>
+
+  <ul>
+    <li>The genetic END artificial-intelligence program currently holds records for shortest possible networks of size 13 and 16</li>
+    <li>Batcher and Baddar wrote a program in 2008 called SortNet for building better sorting networks and using it they have found a record for size 18</li>
+    <li>The <i>pairwise</i> network is better for building selection networks than previous algorithms</li>
+    <li>Find and fix sorting-related side-channel leaks</li>
+    <li>Is it possible to write a GPU program to brute-force search for better networks?</li>
+  </ul>
+</div>
+
+
+<div class="slide">
+  <h1>Thanks</h1>
+
+  <ul>
+    <li>Alan Paeth introduced me to sorting networks</li>
+    <li>John Gamble wrote the perl module Algorithm::Networksort which I used to generate most of the knuth diagrams</li>
+    <li>This presentation is made with S5</li>
+  </ul>
+</div>
+
+
+<div class="slide">
+  <h1>Conclusion</h1>
+
+  <ul style="font-size:120%">
+    <li>Sorting networks are sorting algorithms where all operations are planned out ahead of time</li>
+    <li>In software they are typically inlined into programs and then compiled to native code for performance</li>
+    <li>There are also uses for sorting networks aside from performance</li>
+    <li>Still researched after 60+ years of study</li>
+  </ul>
+</div>
+
+
+
+<div class="slide">
+  <h1>The end</h1>
+  <center>
+    <b style="font-size:200%">Questions?</b>
+
+    <div style="margin-top:30px">
+      <img height=350 src="img/good-size3.svg">
+    </div>
+  </center>
+</div>
+
+
+
+
+
+<!--
+def compare_swap(array, a, b):
+    if array[a] > array[b]:
+        (array[a], array[b]) = (array[b], array[a])
+
+compare_swap(array, 0, 1)
+compare_swap(array, 0, 2)
+compare_swap(array, 1, 2)
+
+def rofl(array):
+  compare_swap(array, 0, 1)
+  compare_swap(array, 1, 2)
+  compare_swap(array, 0, 1)
+  return array
+-->
+
+
+
+<!--
+
+TODO:
+
+Hasse diagrams
+
+Different metrics: number of comparisons vs number of stages
+
+Ability to colour individual comparators, use it on parallelism slides
+
+Performance comparison of "interpreted" sorting networks
+
+
+
+
+Power of 2 size networks, partially redundant operations on non-power of 2 sizes
+
+Avoid mempcy() in kernels: first comparisons pull from external source, subsequent remain in the network
+
+
+
+
+Sortnet: A Program for Building Sorting Networks:
+http://www.kent.edu/CAS/CS/resources/upload/TR-KSU-CS-2008-01.pdf
+
+Randomized Shellsort: A Simple Oblivious Sorting Algorithm
+
+Bitonic sorting network for n not a power of 2
+http://www.iti.fh-flensburg.de/lang/algorithmen/sortieren/bitonic/oddn.htm
+
+Secure Multi-Party Sorting and Applications
+http://eprint.iacr.org/2011/122.pdf
+
+
+http://www.cs.rochester.edu/u/www/u/taoli/classes/cs484/notes/notes22.txt
+http://www.cs.rochester.edu/u/www/u/taoli/classes/cs484/notes/notes23.txt
+http://www.cs.rochester.edu/u/www/u/taoli/classes/cs484/notes/notes24.txt
+
+
+
+
+Introduction to Sorting Networks
+
+Sorting networks are sorting algorithms where all steps are planned out ahead of time. They have applications in performance and security.
+
+No prior knowledge about sorting networks is required, just an understanding of fundamental computer science concepts.
+
+- Knuth diagrams
+- Construction of sorting networks
+- Inlining networks in your programs
+- Algorithm comparisons
+- Parallelism
+- Selection networks
+- Bi-directionality
+- 0-1 principle
+- Sort stability
+- Hasse diagrams, posets, order theory
+- Timing side-channel analysis
+- Summary of active research directions
+
+-->
+
+
+
+
+</div>
+</body>
+</html>
