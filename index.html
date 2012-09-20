@@ -209,6 +209,104 @@
 
 
 <div class="slide">
+  <h1>Hasse diagrams</h1>
+  <center>
+
+  <div style="text-align:left">
+    <ul>
+      <li><i>Order theory</i> is concerned with binary relations between items in a set</li>
+      <li>Useful for analyzing sorting networks</li>
+      <li>A sorting network's job is to turn a partially ordered set (aka <i>poset</i>) into a totally ordered set</li>
+      <li>Here is a <i>hasse diagram</i> depicting an unsorted array (numbers are wire indices):</li>
+    </ul>
+  </div>
+
+  <img style="margin-top:30px" src="img-manual/hasse1.png">
+
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 2</h1>
+  <center>
+  <img src="img-manual/hasse2.png">
+  <img height=200 src="img/hasse2.svg">
+
+  <div style="text-align:left">
+    <ul>
+      <li>If we do a compare-swap on wires 0 and 2, we end up with a 3-segment poset</li>
+      <li>The hasse diagram indicates we now know the relative order between the elements on wires 0 and 2, but no other orders</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 3</h1>
+  <center>
+  <img src="img-manual/hasse3.png">
+  <img height=200 src="img/hasse3.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>Comparing wires 1 and 3 gives a 2-segment poset</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 4</h1>
+  <center>
+  <img src="img-manual/hasse4.png">
+  <img height=200 src="img/hasse4.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>Now we have a single poset to work with</li>
+      <li>This diagram shows that element 0 now contains the largest value</li>
+      <li>The smallest value isn't yet known: it could be in 2 or 3</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 5</h1>
+  <center>
+  <img src="img-manual/hasse5.png">
+  <img height=200 src="img/hasse5.svg">
+  <div style="text-align:left">
+    <ul>
+      <li>After sorting 2 and 3, the smallest value is now in 3</li>
+      <li>The only thing remaining is to figure out which of the elements in 1 or 2 are larger</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+<div class="slide">
+  <h1>Hasse diagrams, 6</h1>
+  <center>
+
+  <table><tr><td>
+  <img src="img-manual/hasse6.png">
+  </td><td>
+  <img height=200 src="img/hasse6.svg">
+  </td></tr></table>
+  <div style="text-align:left">
+    <ul>
+      <li>We now have a totally ordered set</li>
+      <li>Using hasse diagrams we have shown that this is a valid sorting network</li>
+    </ul>
+  </div>
+  </center>
+</div>
+
+
+
+
+
+
+<div class="slide">
   <h1>Various network algorithms</h1>
   <center style="margin-top:10px">
 
@@ -466,98 +564,6 @@
 
 
 
-<div class="slide">
-  <h1>Hasse diagrams</h1>
-  <center>
-
-  <div style="text-align:left">
-    <ul>
-      <li><i>Order theory</i> is concerned with binary relations between items in a set</li>
-      <li>Useful for analyzing sorting networks</li>
-      <li>A sorting network's job is to turn a partially ordered set (aka <i>poset</i>) into a totally ordered set</li>
-      <li>Here is a <i>hasse diagram</i> depicting an unsorted array (numbers are wire indices):</li>
-    </ul>
-  </div>
-
-  <img style="margin-top:30px" src="img-manual/hasse1.png">
-
-  </center>
-</div>
-
-<div class="slide">
-  <h1>Hasse diagrams, 2</h1>
-  <center>
-  <img src="img-manual/hasse2.png">
-  <img height=200 src="img/hasse2.svg">
-
-  <div style="text-align:left">
-    <ul>
-      <li>If we do a compare-swap on wires 0 and 2, we end up with a 3-segment poset</li>
-      <li>The hasse diagram indicates we now know the relative order between the elements on wires 0 and 2, but no other orders</li>
-    </ul>
-  </div>
-  </center>
-</div>
-
-<div class="slide">
-  <h1>Hasse diagrams, 3</h1>
-  <center>
-  <img src="img-manual/hasse3.png">
-  <img height=200 src="img/hasse3.svg">
-  <div style="text-align:left">
-    <ul>
-      <li>Comparing wires 1 and 3 gives a 2-segment poset</li>
-    </ul>
-  </div>
-  </center>
-</div>
-
-<div class="slide">
-  <h1>Hasse diagrams, 4</h1>
-  <center>
-  <img src="img-manual/hasse4.png">
-  <img height=200 src="img/hasse4.svg">
-  <div style="text-align:left">
-    <ul>
-      <li>Now we have a single poset to work with</li>
-      <li>This diagram shows that element 0 now contains the largest value</li>
-      <li>The smallest value isn't yet known: it could be in 2 or 3</li>
-    </ul>
-  </div>
-  </center>
-</div>
-
-<div class="slide">
-  <h1>Hasse diagrams, 5</h1>
-  <center>
-  <img src="img-manual/hasse5.png">
-  <img height=200 src="img/hasse5.svg">
-  <div style="text-align:left">
-    <ul>
-      <li>After sorting 2 and 3, the smallest value is now in 3</li>
-      <li>The only thing remaining is to figure out which of the elements in 1 or 2 are larger</li>
-    </ul>
-  </div>
-  </center>
-</div>
-
-<div class="slide">
-  <h1>Hasse diagrams, 6</h1>
-  <center>
-
-  <table><tr><td>
-  <img src="img-manual/hasse6.png">
-  </td><td>
-  <img height=200 src="img/hasse6.svg">
-  </td></tr></table>
-  <div style="text-align:left">
-    <ul>
-      <li>We now have a totally ordered set</li>
-      <li>Using hasse diagrams we have shown that this is a valid sorting network</li>
-    </ul>
-  </div>
-  </center>
-</div>
 
 
 
