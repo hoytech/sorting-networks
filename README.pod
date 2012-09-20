@@ -1,9 +1,5 @@
 =encoding utf-8
 
-=head1 NAME
-
 sorting-networks - A presentation about sorting networks
-
-=head1 DESCRIPTION
 
 http://hoytech.github.com/sorting-networks
