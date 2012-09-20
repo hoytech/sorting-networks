@@ -2,8 +2,8 @@
 
 =head1 NAME
 
-Session::Token - Secure, efficient, simple random session token generation
+sorting-networks - A presentation about sorting networks
 
 =head1 DESCRIPTION
 
-L<View the presentation|http://hoytech.github.com/sorting-networks> (http://hoytech.github.com/sorting-networks)
+http://hoytech.github.com/sorting-networks
