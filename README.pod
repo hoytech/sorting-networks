@@ -6,7 +6,7 @@ sorting-networks - A presentation about sorting networks
 
 =head1 VIEW
 
-http://hoytech.github.com/sorting-networks
+http://hoytech.github.io/sorting-networks
 
 =head1 SOURCE
 
