@@ -1,0 +1,10 @@
+* Switch to reveal.js so it works on touch devices
+
+* Power of 2 size sorting networks can be converted into arbitrary size
+  networks by trivially dropping higher comparators. Describe why this
+  works.
+
+* Boolean function representation:
+  http://www.jmlr.org/papers/volume14/valsalam13a/valsalam13a.pdf
+
+* Fix gplot axes? I think they are off a bit?
